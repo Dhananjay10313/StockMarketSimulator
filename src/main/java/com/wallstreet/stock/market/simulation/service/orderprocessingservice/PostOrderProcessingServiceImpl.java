@@ -7,7 +7,7 @@ import com.wallstreet.stock.market.simulation.dto.TradeDTO;
 import com.wallstreet.stock.market.simulation.repository.OrderRepository;
 import com.wallstreet.stock.market.simulation.repository.TradeRepository;
 import com.wallstreet.stock.market.simulation.service.orderprocessingservice.NotificationService;
-import com.wallstreet.stock.market.simulation.service.PortfolioService;
+import com.wallstreet.stock.market.simulation.service.orderprocessingservice.PortfolioService;
 import com.wallstreet.stock.market.simulation.service.orderprocessingservice.PostOrderProcessingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
