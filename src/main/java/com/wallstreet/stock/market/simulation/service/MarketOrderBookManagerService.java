@@ -3,6 +3,7 @@ package com.wallstreet.stock.market.simulation.service;
 import com.wallstreet.stock.market.simulation.dto.OrderDTO;
 import com.wallstreet.stock.market.simulation.orderbook.MarketOrderBook;
 import com.wallstreet.stock.market.simulation.model.enums.OrderSide;
+import com.wallstreet.stock.market.simulation.model.enums.OrderType;
 import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.Map;
@@ -16,7 +17,7 @@ public class MarketOrderBookManagerService {
     private final Map<String, MarketOrderBook> sellMarketOrderBooks = new ConcurrentHashMap<>();
 
     public void addMarketOrder(OrderDTO order) {
-        if (order.getType() != OrderDTO.Type.MARKET) {
+        if (order.getType() != OrderType.MARKET) {
             throw new IllegalArgumentException("This service only accepts MARKET orders.");
         }
         Map<String, MarketOrderBook> targetBookMap = (order.getSide() == OrderSide.BUY)

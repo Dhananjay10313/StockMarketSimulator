@@ -1,6 +1,8 @@
 package com.wallstreet.stock.market.simulation.orderbook;
 
 import com.wallstreet.stock.market.simulation.dto.OrderDTO;
+import com.wallstreet.stock.market.simulation.model.enums.OrderType;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -36,7 +38,7 @@ public class MarketOrderBook {
      * @param order The market order to add.
      */
     public synchronized void addOrder(OrderDTO order) {
-        if (order.getType() != OrderDTO.Type.MARKET) {
+        if (order.getType() != OrderType.MARKET) {
             throw new IllegalArgumentException("Only MARKET orders can be added to this book.");
         }
         if (order.getPrice() == null) {

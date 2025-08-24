@@ -1,6 +1,7 @@
 package com.wallstreet.stock.market.simulation.orderbook;
 
 import com.wallstreet.stock.market.simulation.dto.OrderDTO;
+import com.wallstreet.stock.market.simulation.model.enums.OrderType;
 import com.wallstreet.stock.market.simulation.dto.LimitOrderNode;
 
 import java.util.HashMap;
@@ -24,7 +25,7 @@ public class LimitOrderBook {
      * by the matching engine that reads from this book.
      */
     public synchronized void addOrder(OrderDTO order) {
-        if (order.getType() != OrderDTO.Type.LIMIT) {
+        if (order.getType() != OrderType.LIMIT) {
             throw new IllegalArgumentException("Only LIMIT orders can be added to the LimitOrderBook.");
         }
         LimitOrderNode newNode = new LimitOrderNode(order);

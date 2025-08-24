@@ -2,6 +2,7 @@ package com.wallstreet.stock.market.simulation.service;
 
 import com.wallstreet.stock.market.simulation.dto.OrderDTO;
 import com.wallstreet.stock.market.simulation.model.enums.OrderSide;
+import com.wallstreet.stock.market.simulation.model.enums.OrderType;
 import com.wallstreet.stock.market.simulation.orderbook.GttOrderBook;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,7 @@ public class GttOrderBookManagerService {
      * @param order The GTT order to add.
      */
     public void addGttOrder(OrderDTO order) {
-        if (order.getType() != OrderDTO.Type.GTT) {
+        if (order.getType() != OrderType.GTT) {
             throw new IllegalArgumentException("This service only accepts GTT orders. Received: " + order.getType());
         }
 

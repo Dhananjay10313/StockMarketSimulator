@@ -5,17 +5,13 @@ import java.util.Objects;
 import java.util.UUID;
 
 import com.wallstreet.stock.market.simulation.model.enums.OrderStatus;
+import com.wallstreet.stock.market.simulation.model.enums.OrderType;
 import com.wallstreet.stock.market.simulation.model.enums.OrderSide;
 
 /**
  * A universal Data Transfer Object for all order types.
  */
 public class OrderDTO {
-
-    public enum Type {
-        LIMIT, MARKET, IOC, GTT
-    }
-
     /**
      * Defines the condition for triggering an order.
      */
@@ -32,24 +28,24 @@ public class OrderDTO {
         BELOW
     }
 
-    private final UUID id;
-    private final UUID userId;
-    private final String symbol;
-    private final OrderSide side;
-    private final Type type;
+    private UUID id;
+    private  UUID userId;
+    private  String symbol;
+    private  OrderSide side;
+    private  OrderType type;
     private long quantity;
     private OrderStatus status = OrderStatus.OPEN;
 
 
     // Fields that may not apply to all order types
-    private final Double price; // Null for MARKET orders
-    private final Double triggerPrice; // Null for non-GTT orders
-    private final TriggerDirection triggerDirection; // Null for non-GTT orders
-    private final Instant createdAt;
+    private Double price; // Null for MARKET orders
+    private Double triggerPrice; // Null for non-GTT orders
+    private TriggerDirection triggerDirection; // Null for non-GTT orders
+    private Instant createdAt;
 
     // Constructor, Getters, and standard methods below...
 
-    public OrderDTO(UUID id, UUID userId, String symbol, OrderSide side, Type type, long quantity, Double price, Double triggerPrice,
+    public OrderDTO(UUID id, UUID userId, String symbol, OrderSide side, OrderType type, long quantity, Double price, Double triggerPrice,
             TriggerDirection triggerDirection, Instant createdAt) {
         this.id = id;
         this.userId = userId;
@@ -63,7 +59,17 @@ public class OrderDTO {
         this.createdAt = createdAt;
     }
 
+    // Setter
+    public void setId(UUID id) {
+        this.id=id;
+    }
+
+    public void setCreatedAt(Instant createdAt){
+        this.createdAt=createdAt;
+    }
+
     // Getters
+
     public UUID getId() {
         return id;
     }
@@ -80,7 +86,7 @@ public class OrderDTO {
         return side;
     }
 
-    public Type getType() {
+    public OrderType getType() {
         return type;
     }
 

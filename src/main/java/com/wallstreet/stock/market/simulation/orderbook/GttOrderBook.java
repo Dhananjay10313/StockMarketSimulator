@@ -1,6 +1,7 @@
 package com.wallstreet.stock.market.simulation.orderbook;
 
 import com.wallstreet.stock.market.simulation.dto.OrderDTO;
+import com.wallstreet.stock.market.simulation.model.enums.OrderType;
 import com.wallstreet.stock.market.simulation.dto.GttOrderNode;
 
 import java.util.HashMap;
@@ -31,7 +32,7 @@ public class GttOrderBook {
      * @param order The GTT order to add.
      */
     public synchronized void addOrder(OrderDTO order) {
-        if (order.getType() != OrderDTO.Type.GTT) {
+        if (order.getType() != OrderType.GTT) {
             throw new IllegalArgumentException("Only GTT orders can be added to the GttOrderBook.");
         }
         GttOrderNode newNode = new GttOrderNode(order);

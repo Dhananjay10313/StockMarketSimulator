@@ -11,6 +11,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -28,8 +30,9 @@ public class Order {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "user_id", nullable = false)
-    private UUID userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User userId;
 
     @Column(name = "symbol", nullable = false)
     private String symbol; // This matches the 'symbol' property for JPA queries
@@ -78,7 +81,7 @@ public class Order {
     }
 
     // You can add a constructor for creating new orders
-    public Order(UUID userId, String symbol, OrderSide side, OrderType type, BigDecimal price, Long qty, Long remainingQty, OrderStatus status, String source) {
+    public Order(User userId, String symbol, OrderSide side, OrderType type, BigDecimal price, Long qty, Long remainingQty, OrderStatus status, String source) {
         this.userId = userId;
         this.symbol = symbol;
         this.side = side;
@@ -104,11 +107,11 @@ public class Order {
         this.id = id;
     }
 
-    public UUID getUserId() {
+    public User getUserId() {
         return userId;
     }
 
-    public void setUserId(UUID userId) {
+    public void setUser(User userId) {
         this.userId = userId;
     }
 

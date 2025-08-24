@@ -2,6 +2,7 @@ package com.wallstreet.stock.market.simulation.service;
 
 import com.wallstreet.stock.market.simulation.dto.OrderDTO;
 import com.wallstreet.stock.market.simulation.model.enums.OrderSide;
+import com.wallstreet.stock.market.simulation.model.enums.OrderType;
 import com.wallstreet.stock.market.simulation.orderbook.LimitOrderBook;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,7 @@ public class LimitOrderBookManagerService {
      * Adds a LIMIT order to the appropriate buy or sell book.
      */
     public void addLimitOrder(OrderDTO order) {
-        if (order.getType() != OrderDTO.Type.LIMIT) {
+        if (order.getType() != OrderType.LIMIT) {
             throw new IllegalArgumentException("This service only accepts LIMIT orders.");
         }
 
