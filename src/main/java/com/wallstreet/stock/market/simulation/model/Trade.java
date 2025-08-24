@@ -1,59 +1,102 @@
 package com.wallstreet.stock.market.simulation.model;
-import com.wallstreet.stock.market.simulation.model.enums.*;
+
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.math.BigDecimal;
-import java.time.*;
-import java.util.*;
+import java.time.OffsetDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "trades", indexes = {
-        @Index(name = "idx_trades_symbol_ts", columnList = "symbol, timestamp DESC")
+        @Index(name = "idx_trades_symbol_ts", columnList = "symbol, timestamp DESC"),
+        @Index(name = "idx_trades_order", columnList = "buy_order_id, sell_order_id")
 })
 public class Trade {
+
     @Id
-    @Column(columnDefinition = "uuid")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", columnDefinition = "uuid", updatable = false, nullable = false)
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "buy_order_id")
-    private Order buyOrder;
+    @Column(name = "buy_order_id")
+    private UUID buyOrderId;
 
-    @ManyToOne
-    @JoinColumn(name = "sell_order_id")
-    private Order sellOrder;
+    @Column(name = "sell_order_id")
+    private UUID sellOrderId;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "symbol")
-    private Stock stock;
+    @Column(name = "symbol", nullable = false)
+    private String symbol;
 
-    @Column(precision = 18, scale = 6, nullable = false)
+    @Column(name = "price", precision = 18, scale = 6, nullable = false)
     private BigDecimal price;
 
-    @Column(nullable = false)
+    @Column(name = "qty", nullable = false)
     private Long qty;
 
+    @CreationTimestamp
+    @Column(name = "timestamp", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime timestamp;
 
-    public Trade() { this.id = UUID.randomUUID(); this.timestamp = OffsetDateTime.now(); }
+    // JPA requires a no-arg constructor
+    public Trade() {
+    }
 
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
+    // --- Getters and Setters ---
 
-    public Order getBuyOrder() { return buyOrder; }
-    public void setBuyOrder(Order buyOrder) { this.buyOrder = buyOrder; }
+    public UUID getId() {
+        return id;
+    }
 
-    public Order getSellOrder() { return sellOrder; }
-    public void setSellOrder(Order sellOrder) { this.sellOrder = sellOrder; }
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
-    public Stock getStock() { return stock; }
-    public void setStock(Stock stock) { this.stock = stock; }
+    public UUID getBuyOrderId() {
+        return buyOrderId;
+    }
 
-    public BigDecimal getPrice() { return price; }
-    public void setPrice(BigDecimal price) { this.price = price; }
+    public void setBuyOrderId(UUID buyOrderId) {
+        this.buyOrderId = buyOrderId;
+    }
 
-    public Long getQty() { return qty; }
-    public void setQty(Long qty) { this.qty = qty; }
+    public UUID getSellOrderId() {
+        return sellOrderId;
+    }
 
-    public OffsetDateTime getTimestamp() { return timestamp; }
-    public void setTimestamp(OffsetDateTime timestamp) { this.timestamp = timestamp; }
+    public void setSellOrderId(UUID sellOrderId) {
+        this.sellOrderId = sellOrderId;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public Long getQty() {
+        return qty;
+    }
+
+    public void setQty(Long qty) {
+        this.qty = qty;
+    }
+
+    public OffsetDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(OffsetDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
 }

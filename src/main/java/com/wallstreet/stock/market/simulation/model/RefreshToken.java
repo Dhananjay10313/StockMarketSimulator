@@ -3,6 +3,10 @@ package com.wallstreet.stock.market.simulation.model;
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.UUID;
+import java.util.Map;
+
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 /**
  * JPA entity for refresh_tokens table
@@ -40,8 +44,9 @@ public class RefreshToken {
     @Column(name = "replaced_by_token", columnDefinition = "text")
     private String replacedByToken;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "device_info", columnDefinition = "jsonb")
-    private String deviceInfo; // JSON as String (optionally convert to Map<String,Object>)
+    private Map<String, Object> deviceInfo; // JSON as String (optionally convert to Map<String,Object>)
 
     @Column(name = "ip_address")
     private String ipAddress;
@@ -128,11 +133,11 @@ public class RefreshToken {
         this.replacedByToken = replacedByToken;
     }
 
-    public String getDeviceInfo() {
+    public Map<String, Object> getDeviceInfo() {
         return deviceInfo;
     }
 
-    public void setDeviceInfo(String deviceInfo) {
+    public void setDeviceInfo(Map<String, Object> deviceInfo) {
         this.deviceInfo = deviceInfo;
     }
 

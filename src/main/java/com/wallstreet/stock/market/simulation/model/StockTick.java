@@ -1,47 +1,59 @@
 package com.wallstreet.stock.market.simulation.model;
-import com.wallstreet.stock.market.simulation.model.enums.*;
-import jakarta.persistence.*;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.math.BigDecimal;
-import java.time.*;
-import java.util.*;
+import java.time.OffsetDateTime;
 
 @Entity
-@Table(name = "stock_ticks", indexes = { @Index(name = "idx_stock_ticks_symbol_ts", columnList = "symbol, ts DESC") })
+@Table(name = "stock_ticks")
 public class StockTick {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Assuming bigint NOT NULL DEFAULT nextval in DB
     private Long id;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "symbol")
-    private Stock stock;
+    @Column(name = "symbol", nullable = false)
+    private String symbol;
 
-    private OffsetDateTime ts;
+    @Column(name = "ts", nullable = false)
+    private OffsetDateTime ts; // Changed to ts for consistency with your schema
 
-    @Column(precision = 18, scale = 6, nullable = false)
+    @Column(name = "price", nullable = false, precision = 18, scale = 6)
     private BigDecimal price;
 
-    private Long volume = 0L;
+    @Column(name = "volume") // Can be null, or set to 0 if no volume is known for synthetic ticks
+    private Long volume;
 
+    @Column(name = "created_at")
     private OffsetDateTime createdAt;
 
-    public StockTick() { this.createdAt = OffsetDateTime.now(); }
+    // Constructors (optional, but good practice)
+    public StockTick() {}
 
+    public StockTick(String symbol, OffsetDateTime ts, BigDecimal price, Long volume) {
+        this.symbol = symbol;
+        this.ts = ts;
+        this.price = price;
+        this.volume = volume;
+        this.createdAt = OffsetDateTime.now(); // Set creation time when new tick is made
+    }
+
+    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-
-    public Stock getStock() { return stock; }
-    public void setStock(Stock stock) { this.stock = stock; }
-
+    public String getSymbol() { return symbol; }
+    public void setSymbol(String symbol) { this.symbol = symbol; }
     public OffsetDateTime getTs() { return ts; }
     public void setTs(OffsetDateTime ts) { this.ts = ts; }
-
     public BigDecimal getPrice() { return price; }
     public void setPrice(BigDecimal price) { this.price = price; }
-
     public Long getVolume() { return volume; }
     public void setVolume(Long volume) { this.volume = volume; }
-
     public OffsetDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
 }

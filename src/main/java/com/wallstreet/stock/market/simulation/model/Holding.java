@@ -1,56 +1,69 @@
 package com.wallstreet.stock.market.simulation.model;
-import com.wallstreet.stock.market.simulation.model.enums.*;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.math.BigDecimal;
-import java.time.*;
-import java.util.*;
+import java.time.OffsetDateTime;
+import java.util.UUID;
 
 @Entity
-@Table(name = "holdings", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "symbol"})})
+@Table(
+    name = "holdings",
+    schema = "public",
+    uniqueConstraints = {
+        // Corresponds to: constraint holdings_user_id_symbol_key unique (user_id, symbol)
+        @UniqueConstraint(name = "holdings_user_id_symbol_key", columnNames = {"user_id", "symbol"})
+    },
+    indexes = {
+        // Corresponds to the CREATE INDEX statements
+        @Index(name = "idx_holdings_user", columnList = "user_id"),
+        @Index(name = "idx_holdings_symbol", columnList = "symbol")
+    }
+)
+@Getter
+@Setter
+@NoArgsConstructor // JPA requires a no-argument constructor
 public class Holding {
+
     @Id
-    @Column(columnDefinition = "uuid")
+    @GeneratedValue(strategy = GenerationType.UUID) // Handles `default gen_random_uuid()`
+    @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "user_id")
+    /**
+     * This establishes the many-to-one relationship with the User entity.
+     * The `user_id` column in the `holdings` table is mapped by this field.
+     * FetchType.LAZY is a performance best practice, preventing the User object
+     * from being loaded from the database until it's explicitly accessed.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, 
+                foreignKey = @ForeignKey(name = "holdings_user_id_fkey"))
     private User user;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "symbol")
-    private Stock stock;
+    @Column(name = "symbol", nullable = false)
+    private String symbol;
 
-    @Column(nullable = false)
+    @Column(name = "qty", nullable = false)
     private Long qty = 0L;
 
-    @Column(nullable = false, precision = 18, scale = 6)
+    @Column(name = "avg_price", nullable = false, precision = 18, scale = 6)
     private BigDecimal avgPrice = BigDecimal.ZERO;
 
-    @Column(nullable = false)
+    @Column(name = "reserved_qty", nullable = false)
     private Long reservedQty = 0L;
 
+    /**
+     * This annotation automatically sets the timestamp when the entity is updated.
+     * Corresponds to `default now()` and will update on every modification.
+     * Using OffsetDateTime for `timestamp with time zone`.
+     */
+    @UpdateTimestamp
+    @Column(name = "updated_at")
     private OffsetDateTime updatedAt;
 
-    public Holding() { this.id = UUID.randomUUID(); this.updatedAt = OffsetDateTime.now(); }
-
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
-
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
-
-    public Stock getStock() { return stock; }
-    public void setStock(Stock stock) { this.stock = stock; }
-
-    public Long getQty() { return qty; }
-    public void setQty(Long qty) { this.qty = qty; }
-
-    public BigDecimal getAvgPrice() { return avgPrice; }
-    public void setAvgPrice(BigDecimal avgPrice) { this.avgPrice = avgPrice; }
-
-    public Long getReservedQty() { return reservedQty; }
-    public void setReservedQty(Long reservedQty) { this.reservedQty = reservedQty; }
-
-    public OffsetDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(OffsetDateTime updatedAt) { this.updatedAt = updatedAt; }
+    // You can add custom constructors, equals(), hashCode(), and toString() methods as needed.
 }
