@@ -1,11 +1,14 @@
 package com.wallstreet.stock.market.simulation.service.ltp;
 
+import org.springframework.boot.autoconfigure.graphql.GraphQlProperties.Sse;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import com.wallstreet.stock.market.simulation.service.stockpricesubscriptionservice.SseService;
+
 
 /**
  * In-memory, thread-safe implementation of the LtpService.
@@ -13,6 +16,12 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Service
 public class LtpServiceImpl implements LtpService {
+
+    private final SseService sseService;
+
+    public LtpServiceImpl(SseService sseService) {
+    this.sseService = sseService;
+}
 
     /**
      * The core data structure for storing LTPs.
@@ -30,6 +39,10 @@ public class LtpServiceImpl implements LtpService {
             return;
         }
         ltpStore.put(symbol, price);
+
+        // **The new integration point**
+        // Trigger the push to all subscribed clients
+        sseService.pushLtpUpdate(symbol, price);
     }
 
     @Override
@@ -44,7 +57,8 @@ public class LtpServiceImpl implements LtpService {
     @Override
     public Map<String, Double> getAllLtps() {
         // Return an unmodifiable view of the map to prevent external modification.
-        // This is a defensive copy, ensuring the caller cannot alter the internal state.
+        // This is a defensive copy, ensuring the caller cannot alter the internal
+        // state.
         return Collections.unmodifiableMap(ltpStore);
     }
 }
