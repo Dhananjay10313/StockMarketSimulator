@@ -7,6 +7,7 @@ import com.wallstreet.stock.market.simulation.model.enums.OrderSide;
 import com.wallstreet.stock.market.simulation.dto.TradeDTO;
 import com.wallstreet.stock.market.simulation.orderbook.MarketOrderBook;
 import com.wallstreet.stock.market.simulation.service.MarketOrderBookManagerService;
+import com.wallstreet.stock.market.simulation.service.influxservice.InfluxService;
 import com.wallstreet.stock.market.simulation.service.ltp.LtpService;
 import org.springframework.stereotype.Component;
 
@@ -20,21 +21,23 @@ public class MarketOrderProcessorImpl implements OrderProcessor {
 
     private static final Duration MARKET_ORDER_EXPIRY = Duration.ofMinutes(5);
 
+
     @Override
     public ProcessingResult process(ProcessingContext context) {
         ProcessingResult result = new ProcessingResult();
         MarketOrderBookManagerService marketManager = context.getOrderBookManager().getMarketOrderBookManagerService();
         LtpService ltpService = context.getLtpService();
+        InfluxService influxService = context.getInfluxService();
 
         Set<String> activeSymbols = marketManager.getAllBuyBooks().keySet();
 
         for (String symbol : activeSymbols) {
-            processOrdersForSymbol(symbol, context, result, marketManager, ltpService);
+            processOrdersForSymbol(symbol, context, result, marketManager, ltpService, influxService);
         }
         return result;
     }
 
-    private void processOrdersForSymbol(String symbol, ProcessingContext context, ProcessingResult result, MarketOrderBookManagerService marketManager, LtpService ltpService) {
+    private void processOrdersForSymbol(String symbol, ProcessingContext context, ProcessingResult result, MarketOrderBookManagerService marketManager, LtpService ltpService, InfluxService influxService) {
         MarketOrderBook buyBook = marketManager.getBuyBook(symbol);
         MarketOrderBook sellBook = marketManager.getSellBook(symbol);
 
@@ -61,11 +64,11 @@ public class MarketOrderProcessorImpl implements OrderProcessor {
                 continue; // Find the next lowest priced sell order.
             }
 
-            executeMatch(marketBuyOrder, lowestPriceSellOrder, result, marketManager, ltpService);
+            executeMatch(marketBuyOrder, lowestPriceSellOrder, result, marketManager, ltpService, influxService);
         }
     }
 
-    private void executeMatch(OrderDTO buyOrder, OrderDTO sellOrder, ProcessingResult result, MarketOrderBookManagerService marketManager, LtpService ltpService) {
+    private void executeMatch(OrderDTO buyOrder, OrderDTO sellOrder, ProcessingResult result, MarketOrderBookManagerService marketManager, LtpService ltpService, InfluxService influxService) {
         // Point 2: Corrected execution price logic.
         double executionPrice;
         if (buyOrder.getCreatedAt().isBefore(sellOrder.getCreatedAt())) {
@@ -78,7 +81,12 @@ public class MarketOrderProcessorImpl implements OrderProcessor {
 
         long executionQty = Math.min(buyOrder.getQuantity(), sellOrder.getQuantity());
 
+        
+        //Updating LTP of stock
         ltpService.updateLtp(buyOrder.getSymbol(), executionPrice);
+
+        // Inserting value to influxdb new stock price record 
+        influxService.insertStockPriceRecord(buyOrder.getSymbol(), executionPrice, (int)executionQty, Instant.now());
 
         // Point 3: Assumes TradeDTO exists elsewhere. The builder is called here.
         TradeDTO trade = TradeDTO.builder()

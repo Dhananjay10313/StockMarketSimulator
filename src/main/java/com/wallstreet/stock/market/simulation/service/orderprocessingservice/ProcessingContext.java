@@ -1,6 +1,7 @@
 package com.wallstreet.stock.market.simulation.service.orderprocessingservice;
 
 import com.wallstreet.stock.market.simulation.service.OrderBookManager;
+import com.wallstreet.stock.market.simulation.service.influxservice.InfluxService;
 import com.wallstreet.stock.market.simulation.service.ltp.LtpService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,6 +39,11 @@ public class ProcessingContext {
      * A reference to the LTP service for any potential real-time lookups if needed.
      */
     private final LtpService ltpService;
+
+    /**
+     * A reference to the influx service for any potential real-time lookups if needed.
+     */
+    private final InfluxService influxService;
 
     // You can add other shared services or data here as needed, such as
     // references to a NotificationService or a WalletService if you choose

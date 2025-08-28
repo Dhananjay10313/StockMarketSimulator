@@ -7,6 +7,7 @@ import com.wallstreet.stock.market.simulation.model.Wallet;
 import com.wallstreet.stock.market.simulation.repository.HoldingRepository;
 import com.wallstreet.stock.market.simulation.repository.UserRepository;
 import com.wallstreet.stock.market.simulation.repository.WalletRepository;
+import com.wallstreet.stock.market.simulation.service.influxservice.InfluxService;
 import com.wallstreet.stock.market.simulation.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,8 @@ public class PortfolioServiceImpl implements PortfolioService {
     private final WalletRepository walletRepository;
     private final HoldingRepository holdingRepository;
     private final UserRepository userRepository;
-    private final OrderRepository orderRepository; // Assuming you have a way to get user from order
+    private final OrderRepository orderRepository; 
+    private final InfluxService influxService; // Assuming you have a way to get user from order
 
     @Override
     public void updatePortfolioAfterTrade(Trade trade) {

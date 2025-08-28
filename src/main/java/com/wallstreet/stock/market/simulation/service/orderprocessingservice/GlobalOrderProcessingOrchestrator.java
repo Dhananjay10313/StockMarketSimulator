@@ -3,6 +3,7 @@ package com.wallstreet.stock.market.simulation.service.orderprocessingservice;
 import com.wallstreet.stock.market.simulation.service.orderprocessingservice.ProcessingContext;
 import com.wallstreet.stock.market.simulation.service.ltp.LtpService;
 import com.wallstreet.stock.market.simulation.service.OrderBookManager;
+import com.wallstreet.stock.market.simulation.service.influxservice.InfluxService;
 import com.wallstreet.stock.market.simulation.service.orderprocessingservice.ProcessingResult;
 import com.wallstreet.stock.market.simulation.service.orderprocessingservice.OrderProcessor;
 import com.wallstreet.stock.market.simulation.service.orderprocessingservice.PostOrderProcessingService;
@@ -32,6 +33,7 @@ public class GlobalOrderProcessingOrchestrator {
     private final PostOrderProcessingService postOrderProcessingService;
     private final LtpService ltpService;
     private final OrderBookManager orderBookManager;
+    private final InfluxService influxService;
 
     /**
      * The main processing loop, scheduled to run at a fixed delay.
@@ -48,7 +50,8 @@ public class GlobalOrderProcessingOrchestrator {
             Instant.now(),
             ltpSnapshot,
             orderBookManager,
-            ltpService
+            ltpService,
+            influxService
         );
 
         List<ProcessingResult> allResults = new ArrayList<>();

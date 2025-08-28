@@ -2,6 +2,9 @@ package com.wallstreet.stock.market.simulation.service;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import com.wallstreet.stock.market.simulation.service.influxservice.InfluxService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +14,7 @@ public class StockPriceUpdateWorker {
     private static final Logger logger = LoggerFactory.getLogger(StockPriceUpdateWorker.class);
     private final PriceCalculationService priceCalculationService;
 
-    public StockPriceUpdateWorker(PriceCalculationService priceCalculationService) {
+    public StockPriceUpdateWorker(PriceCalculationService priceCalculationService, InfluxService influxService) {
         this.priceCalculationService = priceCalculationService;
     }
 

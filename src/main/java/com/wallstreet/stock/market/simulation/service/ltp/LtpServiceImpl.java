@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import com.wallstreet.stock.market.simulation.service.stockpricesubscriptionservice.SseService;
 
-
 /**
  * In-memory, thread-safe implementation of the LtpService.
  * Uses a ConcurrentHashMap to store and manage stock LTPs.
@@ -20,8 +19,8 @@ public class LtpServiceImpl implements LtpService {
     private final SseService sseService;
 
     public LtpServiceImpl(SseService sseService) {
-    this.sseService = sseService;
-}
+        this.sseService = sseService;
+    }
 
     /**
      * The core data structure for storing LTPs.
